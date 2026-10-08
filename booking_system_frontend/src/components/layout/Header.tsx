@@ -4,8 +4,12 @@ import { useUser } from '../../hooks/useUser';
 import { Button } from '../common';
 import { motion } from 'framer-motion';
 
+interface HeaderProps {
+  onSignIn: () => void;
+}
+
 /** Top navigation bar for Stagepass. */
-export const Header = () => {
+export const Header = ({ onSignIn }: HeaderProps) => {
   const location = useLocation();
   const { user, logout } = useUser();
 
@@ -83,9 +87,14 @@ export const Header = () => {
                 </Button>
               </div>
             ) : (
-              <Link to="/flights">
-                <Button size="sm">Get Tickets</Button>
-              </Link>
+              <>
+                <Button variant="secondary" size="sm" onClick={onSignIn}>
+                  Sign In
+                </Button>
+                <Link to="/flights">
+                  <Button size="sm">Get Tickets</Button>
+                </Link>
+              </>
             )}
           </div>
         </div>

@@ -54,7 +54,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className={`glass-card w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto`}
+              className={`glass-card w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto !bg-[rgba(10,25,41,0.92)] p-6`}
             >
               {/* Header */}
               {title && (

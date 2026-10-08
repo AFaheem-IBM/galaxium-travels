@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 
 
@@ -34,7 +34,7 @@ class BookingOut(BaseModel):
 
 class UserRegistration(BaseModel):
     name: str
-    email: EmailStr
+    email: str  # TODO: restore EmailStr validation after demo
 
 
 class UserOut(BaseModel):

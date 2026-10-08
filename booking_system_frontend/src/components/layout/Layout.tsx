@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { Starfield } from '../common/Starfield';
 import { Toaster } from 'react-hot-toast';
+import { UserIdentification } from '../user/UserIdentification';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export const Layout = ({ children }: LayoutProps) => {
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col relative">
       {/* Animated starfield background */}
@@ -41,7 +45,14 @@ export const Layout = ({ children }: LayoutProps) => {
       />
       
       {/* Header */}
-      <Header />
+      <Header onSignIn={() => setIsSignInOpen(true)} />
+
+      {/* Sign in modal — rendered here so it isn't clipped by the header's stacking context */}
+      <UserIdentification
+        isOpen={isSignInOpen}
+        onClose={() => setIsSignInOpen(false)}
+        onSuccess={() => setIsSignInOpen(false)}
+      />
       
       {/* Main content */}
       <main className="relative z-10 flex-1 pt-24 pb-8">
