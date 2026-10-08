@@ -9,6 +9,7 @@ import { AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
+/** Page that lists all tickets the current user has purchased. */
 export const MyBookings = () => {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export const MyBookings = () => {
       setBookings(bookingsData);
       setFlights(flightsData);
     } catch (error: any) {
-      toast.error('Failed to load bookings');
+      toast.error('Failed to load tickets');
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -65,10 +66,10 @@ export const MyBookings = () => {
         return;
       }
 
-      toast.success('Booking cancelled successfully');
-      loadData(); // Reload bookings
+      toast.success('Ticket cancelled successfully');
+      loadData();
     } catch (error: any) {
-      toast.error(error.details || error.error || 'Failed to cancel booking');
+      toast.error(error.details || error.error || 'Failed to cancel ticket');
     } finally {
       setCancellingId(null);
       setBookingToCancel(null);
@@ -95,15 +96,15 @@ export const MyBookings = () => {
         className="text-center"
       >
         <h1 className="text-4xl md:text-5xl font-bold text-star-white mb-4">
-          My <span className="bg-cosmic-gradient bg-clip-text text-transparent">Bookings</span>
+          My <span className="bg-cosmic-gradient bg-clip-text text-transparent">Tickets</span>
         </h1>
         <p className="text-star-white/70 text-lg">
-          Manage your space travel reservations
+          Manage your event reservations
         </p>
       </motion.div>
 
       {isLoading ? (
-        <LoadingSpinner size="lg" text="Loading your bookings..." />
+        <LoadingSpinner size="lg" text="Loading your tickets..." />
       ) : bookings.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -112,18 +113,18 @@ export const MyBookings = () => {
         >
           <AlertCircle className="mx-auto mb-4 text-star-white/50" size={48} />
           <h3 className="text-xl font-semibold text-star-white mb-2">
-            No bookings yet
+            No tickets yet
           </h3>
           <p className="text-star-white/70 mb-6">
-            Start your space adventure by booking your first flight!
+            Find an event you love and grab your ticket before it sells out!
           </p>
           <Button onClick={() => navigate('/flights')}>
-            Browse Flights
+            Browse Events
           </Button>
         </motion.div>
       ) : (
         <div className="space-y-8">
-          {/* Active Bookings */}
+          {/* Active Tickets */}
           {activeBookings.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -131,7 +132,7 @@ export const MyBookings = () => {
               transition={{ delay: 0.1 }}
             >
               <h2 className="text-2xl font-bold text-star-white mb-4">
-                Active Bookings ({activeBookings.length})
+                Upcoming Events ({activeBookings.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {activeBookings.map((booking) => (
@@ -147,7 +148,7 @@ export const MyBookings = () => {
             </motion.div>
           )}
 
-          {/* Past Bookings */}
+          {/* Past Tickets */}
           {pastBookings.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -155,7 +156,7 @@ export const MyBookings = () => {
               transition={{ delay: 0.2 }}
             >
               <h2 className="text-2xl font-bold text-star-white mb-4">
-                Past Bookings ({pastBookings.length})
+                Past Events ({pastBookings.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {pastBookings.map((booking) => (
@@ -176,12 +177,12 @@ export const MyBookings = () => {
       <Modal
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}
-        title="Cancel Booking"
+        title="Cancel Ticket"
         size="sm"
       >
         <div className="space-y-4">
           <p className="text-star-white/70">
-            Are you sure you want to cancel this booking? This action cannot be undone.
+            Are you sure you want to cancel this ticket? This action cannot be undone.
           </p>
           <div className="flex gap-3">
             <Button
@@ -189,14 +190,14 @@ export const MyBookings = () => {
               onClick={() => setShowCancelModal(false)}
               className="flex-1"
             >
-              Keep Booking
+              Keep Ticket
             </Button>
             <Button
               variant="danger"
               onClick={handleConfirmCancel}
               className="flex-1"
             >
-              Cancel Booking
+              Cancel Ticket
             </Button>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { Search, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
+/** Events listing page — browse and book tickets for concerts, conferences, and sporting events. */
 export const Flights = () => {
   const { user } = useUser();
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -20,12 +21,12 @@ export const Flights = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
 
-  // Fetch flights on mount
+  // Fetch events on mount
   useEffect(() => {
     loadFlights();
   }, []);
 
-  // Filter flights when search term changes
+  // Filter events when search term changes
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredFlights(flights);
@@ -48,7 +49,7 @@ export const Flights = () => {
       setFlights(data);
       setFilteredFlights(data);
     } catch (error: any) {
-      toast.error('Failed to load flights');
+      toast.error('Failed to load events');
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -57,23 +58,19 @@ export const Flights = () => {
 
   const handleBookFlight = (flight: Flight) => {
     setSelectedFlight(flight);
-    
+
     if (!user) {
-      // Show user identification modal first
       setShowUserModal(true);
     } else {
-      // Show booking confirmation modal
       setShowBookingModal(true);
     }
   };
 
   const handleUserIdentified = () => {
-    // After user signs in, show booking modal
     setShowBookingModal(true);
   };
 
   const handleBookingSuccess = () => {
-    // Reload flights to get updated seat availability
     loadFlights();
   };
 
@@ -86,10 +83,10 @@ export const Flights = () => {
         className="text-center"
       >
         <h1 className="text-4xl md:text-5xl font-bold text-star-white mb-4">
-          Available <span className="bg-cosmic-gradient bg-clip-text text-transparent">Flights</span>
+          Available <span className="bg-cosmic-gradient bg-clip-text text-transparent">Events</span>
         </h1>
         <p className="text-star-white/70 text-lg">
-          Choose your destination and embark on an interplanetary adventure
+          Find your next unforgettable experience — concerts, conferences, and sporting events
         </p>
       </motion.div>
 
@@ -106,7 +103,7 @@ export const Flights = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-star-white/50" size={20} />
             <input
               type="text"
-              placeholder="Search by origin or destination..."
+              placeholder="Search by venue or event name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-star-white placeholder-star-white/50 focus:outline-none focus:ring-2 focus:ring-cosmic-purple"
@@ -117,15 +114,15 @@ export const Flights = () => {
           <div className="flex items-center gap-2 text-star-white/70">
             <Filter size={20} />
             <span className="text-sm">
-              {filteredFlights.length} of {flights.length} flights
+              {filteredFlights.length} of {flights.length} events
             </span>
           </div>
         </div>
       </motion.div>
 
-      {/* Flights Grid */}
+      {/* Events Grid */}
       {isLoading ? (
-        <LoadingSpinner size="lg" text="Loading flights..." />
+        <LoadingSpinner size="lg" text="Loading events..." />
       ) : filteredFlights.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -133,7 +130,7 @@ export const Flights = () => {
           className="text-center py-12"
         >
           <p className="text-star-white/70 text-lg">
-            {searchTerm ? 'No flights found matching your search' : 'No flights available'}
+            {searchTerm ? 'No events found matching your search' : 'No events available'}
           </p>
         </motion.div>
       ) : (

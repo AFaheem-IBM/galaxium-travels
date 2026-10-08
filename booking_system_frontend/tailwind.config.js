@@ -7,17 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        'space-dark': '#030712',
-        'space-blue': '#0A1929',
-        'cosmic-purple': '#6366F1',
-        'nebula-pink': '#EC4899',
-        'alien-green': '#10B981',
-        'solar-orange': '#F59E0B',
+        'space-dark': '#0D0D0D',
+        'space-blue': '#161616',
+        'cosmic-purple': '#E53935',
+        'nebula-pink': '#FF7043',
+        'alien-green': '#00C853',
+        'solar-orange': '#FFB300',
         'star-white': '#F9FAFB',
       },
       backgroundImage: {
-        'space-gradient': 'linear-gradient(to bottom, #030712, #0A1929)',
-        'cosmic-gradient': 'linear-gradient(135deg, #6366F1, #EC4899)',
+        'space-gradient': 'linear-gradient(to bottom, #0D0D0D, #161616)',
+        'cosmic-gradient': 'linear-gradient(135deg, #E53935, #FF7043)',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

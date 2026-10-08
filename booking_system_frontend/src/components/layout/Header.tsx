@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Rocket, User, LogOut } from 'lucide-react';
+import { Ticket, User, LogOut } from 'lucide-react';
 import { useUser } from '../../hooks/useUser';
 import { Button } from '../common';
 import { motion } from 'framer-motion';
 
+/** Top navigation bar for Stagepass. */
 export const Header = () => {
   const location = useLocation();
   const { user, logout } = useUser();
@@ -20,10 +21,10 @@ export const Header = () => {
               whileHover={{ rotate: 15 }}
               transition={{ duration: 0.3 }}
             >
-              <Rocket className="text-cosmic-purple" size={32} />
+              <Ticket className="text-cosmic-purple" size={32} />
             </motion.div>
             <span className="text-2xl font-bold bg-cosmic-gradient bg-clip-text text-transparent">
-              Galaxium Travels
+              Stagepass
             </span>
           </Link>
 
@@ -47,7 +48,7 @@ export const Header = () => {
                   : 'text-star-white/70 hover:text-star-white'
               }`}
             >
-              Flights
+              Events
             </Link>
             {user && (
               <Link
@@ -58,7 +59,7 @@ export const Header = () => {
                     : 'text-star-white/70 hover:text-star-white'
                 }`}
               >
-                My Bookings
+                My Tickets
               </Link>
             )}
           </nav>
@@ -83,7 +84,7 @@ export const Header = () => {
               </div>
             ) : (
               <Link to="/flights">
-                <Button size="sm">Book a Flight</Button>
+                <Button size="sm">Get Tickets</Button>
               </Link>
             )}
           </div>
@@ -109,7 +110,7 @@ export const Header = () => {
                 : 'text-star-white/70 hover:text-star-white'
             }`}
           >
-            Flights
+            Events
           </Link>
           {user && (
             <Link
@@ -120,7 +121,7 @@ export const Header = () => {
                   : 'text-star-white/70 hover:text-star-white'
               }`}
             >
-              My Bookings
+              My Tickets
             </Link>
           )}
         </nav>

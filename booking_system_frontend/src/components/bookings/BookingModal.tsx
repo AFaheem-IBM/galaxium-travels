@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Flight } from '../../types';
 import { Modal, Button } from '../common';
-import { Plane, Calendar, Clock, DollarSign } from 'lucide-react';
+import { Ticket, Calendar, Clock, DollarSign, MapPin } from 'lucide-react';
 import { formatCurrency, formatDate, calculateDuration } from '../../utils/formatters';
 import { bookFlight, isErrorResponse } from '../../services/api';
 import { useUser } from '../../hooks/useUser';
@@ -14,6 +14,7 @@ interface BookingModalProps {
   onSuccess: () => void;
 }
 
+/** Confirmation modal shown before a ticket purchase is finalised. */
 export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModalProps) => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
 
   const handleConfirmBooking = async () => {
     if (!user) {
-      toast.error('Please sign in to book a flight');
+      toast.error('Please sign in to purchase tickets');
       return;
     }
 
@@ -40,11 +41,11 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
         return;
       }
 
-      toast.success('Flight booked successfully!');
+      toast.success('Ticket booked successfully!');
       onSuccess();
       onClose();
     } catch (error: any) {
-      toast.error(error.details || error.error || 'Failed to book flight');
+      toast.error(error.details || error.error || 'Failed to purchase ticket');
     } finally {
       setIsLoading(false);
     }
@@ -54,43 +55,52 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Confirm Your Booking"
+      title="Confirm Your Ticket"
       size="md"
     >
       <div className="space-y-6">
-        {/* Flight Summary */}
+        {/* Event Summary */}
         <div className="glass-card p-4 bg-white/5">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 rounded-lg bg-cosmic-gradient">
-              <Plane className="text-white" size={24} />
+              <Ticket className="text-white" size={24} />
             </div>
             <div>
               <h3 className="text-xl font-bold text-star-white">
-                {flight.origin} → {flight.destination}
+                {flight.origin}
               </h3>
               <p className="text-sm text-star-white/60">
-                Flight #{flight.flight_id}
+                Event #{flight.flight_id}
               </p>
             </div>
           </div>
 
           <div className="space-y-3">
-            {/* Departure */}
+            {/* Venue */}
+            <div className="flex items-start gap-3">
+              <MapPin className="text-cosmic-purple mt-1" size={20} />
+              <div>
+                <p className="text-xs text-star-white/60">Venue</p>
+                <p className="text-star-white font-medium">{flight.destination}</p>
+              </div>
+            </div>
+
+            {/* Doors Open */}
             <div className="flex items-start gap-3">
               <Calendar className="text-cosmic-purple mt-1" size={20} />
               <div>
-                <p className="text-xs text-star-white/60">Departure</p>
+                <p className="text-xs text-star-white/60">Doors Open</p>
                 <p className="text-star-white font-medium">
                   {formatDate(flight.departure_time)}
                 </p>
               </div>
             </div>
 
-            {/* Arrival */}
+            {/* Event End */}
             <div className="flex items-start gap-3">
               <Calendar className="text-cosmic-purple mt-1" size={20} />
               <div>
-                <p className="text-xs text-star-white/60">Arrival</p>
+                <p className="text-xs text-star-white/60">Event End</p>
                 <p className="text-star-white font-medium">
                   {formatDate(flight.arrival_time)}
                 </p>
@@ -110,11 +120,11 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
           </div>
         </div>
 
-        {/* Passenger Info */}
+        {/* Attendee Info */}
         {user && (
           <div className="glass-card p-4 bg-white/5">
             <h4 className="text-sm font-semibold text-star-white mb-2">
-              Passenger Information
+              Attendee Information
             </h4>
             <p className="text-star-white">{user.name}</p>
             <p className="text-star-white/60 text-sm">{user.email}</p>
@@ -147,7 +157,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
             isLoading={isLoading}
             className="flex-1"
           >
-            Confirm Booking
+            Confirm Purchase
           </Button>
         </div>
 

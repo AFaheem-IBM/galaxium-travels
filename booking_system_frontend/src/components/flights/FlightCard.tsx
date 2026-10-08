@@ -1,6 +1,6 @@
 import type { Flight } from '../../types';
 import { Card, Button } from '../common';
-import { Plane, Clock, DollarSign, Users } from 'lucide-react';
+import { Ticket, Clock, DollarSign, Users, MapPin } from 'lucide-react';
 import { formatCurrency, formatDate, formatTime, calculateDuration } from '../../utils/formatters';
 import { motion } from 'framer-motion';
 
@@ -9,6 +9,7 @@ interface FlightCardProps {
   onBook: (flight: Flight) => void;
 }
 
+/** Displays a single event (concert, conference, or sporting event) with booking action. */
 export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
   const isLowSeats = flight.seats_available <= 2;
   const isSoldOut = flight.seats_available === 0;
@@ -21,29 +22,37 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
       transition={{ duration: 0.3 }}
     >
       <Card className="h-full flex flex-col">
-        {/* Route Header */}
+        {/* Event Header */}
         <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-cosmic-gradient">
-              <Plane className="text-white" size={24} />
+              <Ticket className="text-white" size={24} />
             </div>
             <div>
               <h3 className="text-xl font-bold text-star-white">
-                {flight.origin} → {flight.destination}
+                {flight.origin}
               </h3>
               <p className="text-sm text-star-white/60">
-                Flight #{flight.flight_id}
+                Event #{flight.flight_id}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Flight Details */}
+        {/* Event Details */}
         <div className="space-y-3 mb-6 flex-1">
-          {/* Departure & Arrival */}
+          {/* Venue */}
+          <div className="flex items-center gap-2 text-star-white/70">
+            <MapPin size={16} className="text-cosmic-purple" />
+            <span className="text-sm font-medium text-star-white">
+              {flight.destination}
+            </span>
+          </div>
+
+          {/* Doors Open & End Time */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-star-white/60 mb-1">Departure</p>
+              <p className="text-xs text-star-white/60 mb-1">Doors Open</p>
               <p className="text-sm font-medium text-star-white">
                 {formatDate(flight.departure_time, 'MMM dd, yyyy')}
               </p>
@@ -52,7 +61,7 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
               </p>
             </div>
             <div>
-              <p className="text-xs text-star-white/60 mb-1">Arrival</p>
+              <p className="text-xs text-star-white/60 mb-1">Event End</p>
               <p className="text-sm font-medium text-star-white">
                 {formatDate(flight.arrival_time, 'MMM dd, yyyy')}
               </p>
@@ -76,14 +85,14 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
             <span className="text-2xl font-bold text-star-white">
               {formatCurrency(flight.price)}
             </span>
-            <span className="text-sm text-star-white/60">per seat</span>
+            <span className="text-sm text-star-white/60">per ticket</span>
           </div>
 
-          {/* Seats Available */}
+          {/* Tickets Available */}
           <div className="flex items-center gap-2">
             <Users size={16} className={isLowSeats ? 'text-solar-orange' : 'text-star-white/70'} />
             <span className={`text-sm ${isLowSeats ? 'text-solar-orange font-semibold' : 'text-star-white/70'}`}>
-              {isSoldOut ? 'Sold Out' : `${flight.seats_available} seats available`}
+              {isSoldOut ? 'Sold Out' : `${flight.seats_available} tickets left`}
             </span>
           </div>
         </div>
@@ -94,7 +103,7 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
           disabled={isSoldOut}
           className="w-full"
         >
-          {isSoldOut ? 'Sold Out' : 'Book Now'}
+          {isSoldOut ? 'Sold Out' : 'Get Tickets'}
         </Button>
       </Card>
     </motion.div>

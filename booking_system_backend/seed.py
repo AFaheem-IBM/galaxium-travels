@@ -26,18 +26,23 @@ def seed():
     ]
     db.add_all(users)
     db.commit()
-    # Add demo flights
+    # Add demo events sorted by date (origin = event name, destination = venue)
     flights = [
-        Flight(origin="Earth", destination="Mars", departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z", price=1000000, seats_available=5),
-        Flight(origin="Earth", destination="Moon", departure_time="2099-01-02T10:00:00Z", arrival_time="2099-01-02T14:00:00Z", price=500000, seats_available=3),
-        Flight(origin="Mars", destination="Earth", departure_time="2099-01-03T12:00:00Z", arrival_time="2099-01-03T20:00:00Z", price=950000, seats_available=7),
-        Flight(origin="Venus", destination="Earth", departure_time="2099-01-04T08:00:00Z", arrival_time="2099-01-04T18:00:00Z", price=1200000, seats_available=2),
-        Flight(origin="Jupiter", destination="Europa", departure_time="2099-01-05T15:00:00Z", arrival_time="2099-01-05T19:00:00Z", price=2000000, seats_available=1),
-        Flight(origin="Earth", destination="Venus", departure_time="2099-01-06T07:00:00Z", arrival_time="2099-01-06T15:00:00Z", price=1100000, seats_available=4),
-        Flight(origin="Moon", destination="Mars", departure_time="2099-01-07T11:00:00Z", arrival_time="2099-01-07T19:00:00Z", price=800000, seats_available=6),
-        Flight(origin="Mars", destination="Jupiter", departure_time="2099-01-08T13:00:00Z", arrival_time="2099-01-08T23:00:00Z", price=2500000, seats_available=2),
-        Flight(origin="Europa", destination="Earth", departure_time="2099-01-09T09:00:00Z", arrival_time="2099-01-09T21:00:00Z", price=3000000, seats_available=3),
-        Flight(origin="Earth", destination="Pluto", departure_time="2099-01-10T06:00:00Z", arrival_time="2099-01-11T06:00:00Z", price=5000000, seats_available=1),
+        Flight(origin="Nova Pulse: The Neon Circuit Tour", destination="Madison Square Garden, New York", departure_time="2027-02-14T20:00:00Z", arrival_time="2027-02-14T23:00:00Z", price=9500, seats_available=6),
+        Flight(origin="SynthFest 2027", destination="Axiom Arena, Chicago", departure_time="2027-03-01T12:00:00Z", arrival_time="2027-03-01T23:00:00Z", price=14500, seats_available=4),
+        Flight(origin="Premier League: City vs United", destination="Etihad Stadium, Manchester", departure_time="2027-03-08T15:00:00Z", arrival_time="2027-03-08T17:00:00Z", price=8500, seats_available=10),
+        Flight(origin="Solaris & The Drift: Live in Concert", destination="Royal Albert Hall, London", departure_time="2027-03-22T19:30:00Z", arrival_time="2027-03-22T22:00:00Z", price=7500, seats_available=3),
+        Flight(origin="DeveloperWorld Summit 2027", destination="Moscone Center, San Francisco", departure_time="2027-04-05T09:00:00Z", arrival_time="2027-04-05T18:00:00Z", price=49900, seats_available=8),
+        Flight(origin="Lyra Moon: Echoes World Tour", destination="Ziggo Dome, Amsterdam", departure_time="2027-04-19T20:00:00Z", arrival_time="2027-04-19T22:30:00Z", price=11000, seats_available=2),
+        Flight(origin="NBA Playoffs — Conference Finals", destination="United Center, Chicago", departure_time="2027-05-10T20:30:00Z", arrival_time="2027-05-10T23:00:00Z", price=27500, seats_available=5),
+        Flight(origin="The Velvet Static: Farewell Tour", destination="O2 Arena, London", departure_time="2027-05-24T19:00:00Z", arrival_time="2027-05-24T21:30:00Z", price=13500, seats_available=1),
+        Flight(origin="UEFA Champions League Final", destination="Allianz Arena, Munich", departure_time="2027-05-31T19:45:00Z", arrival_time="2027-05-31T21:45:00Z", price=35000, seats_available=2),
+        Flight(origin="UX & Product Design Conference", destination="The Barbican, London", departure_time="2027-06-03T09:00:00Z", arrival_time="2027-06-03T17:30:00Z", price=29900, seats_available=7),
+        Flight(origin="Ember Riot: Sold-Out Summer Show", destination="Accor Arena, Paris", departure_time="2027-06-12T21:00:00Z", arrival_time="2027-06-12T23:30:00Z", price=10500, seats_available=4),
+        Flight(origin="Formula 1 Grand Prix — Monaco", destination="Circuit de Monaco, Monte Carlo", departure_time="2027-06-22T14:00:00Z", arrival_time="2027-06-22T16:30:00Z", price=42000, seats_available=3),
+        Flight(origin="DuskGrove Music Festival", destination="Clapham Common, London", departure_time="2027-07-05T11:00:00Z", arrival_time="2027-07-06T00:00:00Z", price=18500, seats_available=9),
+        Flight(origin="AI Frontiers Conference 2027", destination="ExCeL London, London", departure_time="2027-09-15T09:00:00Z", arrival_time="2027-09-15T18:00:00Z", price=59900, seats_available=6),
+        Flight(origin="Kira Voss: The Midnight Sessions", destination="Beacon Theatre, New York", departure_time="2027-10-03T20:00:00Z", arrival_time="2027-10-03T22:30:00Z", price=8500, seats_available=2),
     ]
     db.add_all(flights)
     db.commit()

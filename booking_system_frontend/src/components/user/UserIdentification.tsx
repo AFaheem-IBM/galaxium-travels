@@ -10,6 +10,7 @@ interface UserIdentificationProps {
   onSuccess: () => void;
 }
 
+/** Sign-in / registration modal shown when a user tries to purchase a ticket without being logged in. */
 export const UserIdentification = ({ isOpen, onClose, onSuccess }: UserIdentificationProps) => {
   const { setUser } = useUser();
   const [name, setName] = useState('');
@@ -19,7 +20,7 @@ export const UserIdentification = ({ isOpen, onClose, onSuccess }: UserIdentific
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim() || !email.trim()) {
       toast.error('Please fill in all fields');
       return;
@@ -29,29 +30,26 @@ export const UserIdentification = ({ isOpen, onClose, onSuccess }: UserIdentific
 
     try {
       if (isNewUser) {
-        // Register new user
         const result = await registerUser({ name: name.trim(), email: email.trim() });
-        
+
         if (isErrorResponse(result)) {
           toast.error(result.details || result.error);
           return;
         }
-        
+
         setUser(result);
         toast.success('Account created successfully!');
         onSuccess();
         onClose();
       } else {
-        // Try to find existing user
         const result = await getUserByCredentials(name.trim(), email.trim());
-        
+
         if (isErrorResponse(result)) {
-          // User not found, suggest registration
           toast.error('User not found. Please register or check your credentials.');
           setIsNewUser(true);
           return;
         }
-        
+
         setUser(result);
         toast.success(`Welcome back, ${result.name}!`);
         onSuccess();
@@ -81,7 +79,7 @@ export const UserIdentification = ({ isOpen, onClose, onSuccess }: UserIdentific
       <form onSubmit={handleSubmit} className="space-y-4">
         <p className="text-star-white/70 text-sm mb-4">
           {isNewUser
-            ? 'Create an account to book your flight'
+            ? 'Create an account to purchase tickets'
             : 'Enter your name and email to continue'}
         </p>
 

@@ -1,29 +1,30 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../components/common';
-import { Rocket, Globe, Shield, Zap } from 'lucide-react';
+import { Ticket, Music, Mic, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+/** Home page for Stagepass — the live event ticketing platform. */
 export const Home = () => {
   const features = [
     {
-      icon: <Rocket size={32} />,
-      title: 'Interplanetary Travel',
-      description: 'Explore destinations across the solar system with our state-of-the-art spacecraft.',
+      icon: <Music size={32} />,
+      title: 'Concerts & Festivals',
+      description: 'Front-row access to the world\'s biggest artists and music festivals.',
     },
     {
-      icon: <Globe size={32} />,
-      title: 'Multiple Destinations',
-      description: 'From Mars to Europa, discover new worlds and book your journey today.',
+      icon: <Mic size={32} />,
+      title: 'Conferences & Talks',
+      description: 'Secure your seat at industry-leading summits and keynote events.',
     },
     {
-      icon: <Shield size={32} />,
-      title: 'Safe & Secure',
-      description: 'Your safety is our priority with advanced navigation and life support systems.',
+      icon: <Trophy size={32} />,
+      title: 'Sporting Events',
+      description: 'Be in the stadium for the games that matter — from local leagues to world championships.',
     },
     {
-      icon: <Zap size={32} />,
+      icon: <Ticket size={32} />,
       title: 'Instant Booking',
-      description: 'Book your flight in seconds and receive instant confirmation.',
+      description: 'Reserve your tickets in seconds and receive instant e-ticket confirmation.',
     },
   ];
 
@@ -43,10 +44,10 @@ export const Home = () => {
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
             <span className="bg-cosmic-gradient bg-clip-text text-transparent">
-              Journey Beyond
+              Your Ticket
             </span>
             <br />
-            <span className="text-star-white">The Stars</span>
+            <span className="text-star-white">To Every Moment</span>
           </h1>
         </motion.div>
 
@@ -56,8 +57,8 @@ export const Home = () => {
           transition={{ delay: 0.4 }}
           className="text-xl text-star-white/80 mb-8 max-w-2xl mx-auto"
         >
-          Experience the future of space travel with Galaxium. Book your
-          interplanetary flight and explore the wonders of our solar system.
+          Stagepass puts you in the room. Browse concerts, conferences, and sporting
+          events — then book your seat before it's gone.
         </motion.p>
 
         <motion.div
@@ -68,7 +69,7 @@ export const Home = () => {
         >
           <Link to="/flights">
             <Button size="lg" className="w-full sm:w-auto">
-              Explore Flights
+              Browse Events
             </Button>
           </Link>
           <Button variant="secondary" size="lg" className="w-full sm:w-auto">
@@ -85,7 +86,7 @@ export const Home = () => {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-12 text-star-white"
         >
-          Why Choose Galaxium?
+          Why Choose Stagepass?
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -118,15 +119,15 @@ export const Home = () => {
         className="glass-card p-12 text-center bg-cosmic-gradient"
       >
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          Ready for Your Space Adventure?
+          Ready to Experience Live Events?
         </h2>
         <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-          Join thousands of space travelers who have already booked their
-          journey to the stars. Your adventure awaits!
+          Join thousands of fans who use Stagepass to grab tickets before they sell out.
+          Don't miss the next great show.
         </p>
         <Link to="/flights">
           <Button variant="secondary" size="lg">
-            Book Your Flight Now
+            Get Tickets Now
           </Button>
         </Link>
       </motion.section>
