@@ -1,25 +1,25 @@
 import { useState } from 'react';
-import type { Flight } from '../../types';
+import type { Event } from '../../types';
 import { Modal, Button } from '../common';
 import { Ticket, Calendar, Clock, DollarSign, MapPin } from 'lucide-react';
 import { formatCurrency, formatDate, calculateDuration } from '../../utils/formatters';
-import { bookFlight, isErrorResponse } from '../../services/api';
+import { bookTicket, isErrorResponse } from '../../services/api';
 import { useUser } from '../../hooks/useUser';
 import toast from 'react-hot-toast';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  flight: Flight | null;
+  event: Event | null;
   onSuccess: () => void;
 }
 
 /** Confirmation modal shown before a ticket purchase is finalised. */
-export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModalProps) => {
+export const BookingModal = ({ isOpen, onClose, event, onSuccess }: BookingModalProps) => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!flight) return null;
+  if (!event) return null;
 
   const handleConfirmBooking = async () => {
     if (!user) {
@@ -30,10 +30,10 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
     setIsLoading(true);
 
     try {
-      const result = await bookFlight({
+      const result = await bookTicket({
         user_id: user.user_id,
         name: user.name,
-        flight_id: flight.flight_id,
+        event_id: event.event_id,
       });
 
       if (isErrorResponse(result)) {
@@ -67,10 +67,10 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
             </div>
             <div>
               <h3 className="text-xl font-bold text-star-white">
-                {flight.origin}
+                {event.origin}
               </h3>
               <p className="text-sm text-star-white/60">
-                Event #{flight.flight_id}
+                Event #{event.event_id}
               </p>
             </div>
           </div>
@@ -81,7 +81,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
               <MapPin className="text-cosmic-purple mt-1" size={20} />
               <div>
                 <p className="text-xs text-star-white/60">Venue</p>
-                <p className="text-star-white font-medium">{flight.destination}</p>
+                <p className="text-star-white font-medium">{event.destination}</p>
               </div>
             </div>
 
@@ -91,7 +91,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
               <div>
                 <p className="text-xs text-star-white/60">Doors Open</p>
                 <p className="text-star-white font-medium">
-                  {formatDate(flight.departure_time)}
+                  {formatDate(event.departure_time)}
                 </p>
               </div>
             </div>
@@ -102,7 +102,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
               <div>
                 <p className="text-xs text-star-white/60">Event End</p>
                 <p className="text-star-white font-medium">
-                  {formatDate(flight.arrival_time)}
+                  {formatDate(event.arrival_time)}
                 </p>
               </div>
             </div>
@@ -113,7 +113,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
               <div>
                 <p className="text-xs text-star-white/60">Duration</p>
                 <p className="text-star-white font-medium">
-                  {calculateDuration(flight.departure_time, flight.arrival_time)}
+                  {calculateDuration(event.departure_time, event.arrival_time)}
                 </p>
               </div>
             </div>
@@ -138,7 +138,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
             <span className="text-white font-semibold">Total Price</span>
           </div>
           <span className="text-2xl font-bold text-white">
-            {formatCurrency(flight.price)}
+            {formatCurrency(event.price)}
           </span>
         </div>
 

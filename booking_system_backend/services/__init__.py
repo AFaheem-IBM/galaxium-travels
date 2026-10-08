@@ -1,3 +1,3 @@
-from . import flight, user, booking
+from . import event, user, booking
 
-__all__ = ["flight", "user", "booking"]
+__all__ = ["event", "user", "booking"]

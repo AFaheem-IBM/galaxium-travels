@@ -1,26 +1,26 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
-from models import User, Flight, Booking
+from models import User, Event, Booking
 from schemas import BookingOut, ErrorResponse
 
 
-def book_flight(db: Session, user_id: int, name: str, flight_id: int) -> BookingOut | ErrorResponse:
-    """Book a seat on a specific flight for a user."""
-    # Check flight exists
-    flight = db.query(Flight).filter(Flight.flight_id == flight_id).first()
-    if not flight:
+def book_ticket(db: Session, user_id: int, name: str, event_id: int) -> BookingOut | ErrorResponse:
+    """Book a ticket for a specific event for a user."""
+    # Check event exists
+    event = db.query(Event).filter(Event.event_id == event_id).first()
+    if not event:
         return ErrorResponse(
-            error="Flight not found",
-            error_code="FLIGHT_NOT_FOUND",
-            details=f"The specified flight_id {flight_id} does not exist in our system. Please check the flight_id or use list_flights to see available flights."
+            error="Event not found",
+            error_code="EVENT_NOT_FOUND",
+            details=f"The specified event_id {event_id} does not exist in our system. Please check the event_id or use list_events to see available events."
         )
 
-    # Check seats available
-    if flight.seats_available < 1:
+    # Check tickets available
+    if event.tickets_available < 1:
         return ErrorResponse(
-            error="No seats available",
-            error_code="NO_SEATS_AVAILABLE",
-            details="The flight is fully booked. Please check other flights or try again later if seats become available."
+            error="No tickets available",
+            error_code="NO_TICKETS_AVAILABLE",
+            details="This event is sold out. Please check other events or try again later if tickets become available."
         )
 
     # Check user exists and name matches
@@ -41,10 +41,10 @@ def book_flight(db: Session, user_id: int, name: str, flight_id: int) -> Booking
             )
 
     # Create booking
-    flight.seats_available -= 1
+    event.tickets_available -= 1
     new_booking = Booking(
         user_id=user_id,
-        flight_id=flight_id,
+        event_id=event_id,
         status="booked",
         booking_time=datetime.utcnow().isoformat()
     )
@@ -71,10 +71,10 @@ def cancel_booking(db: Session, booking_id: int) -> BookingOut | ErrorResponse:
             details=f"Booking {booking_id} is already cancelled and cannot be cancelled again. The booking status is currently '{booking.status}'. If you need to make changes, please contact support."
         )
 
-    # Restore seat
-    flight = db.query(Flight).filter(Flight.flight_id == booking.flight_id).first()
-    if flight:
-        flight.seats_available += 1
+    # Restore ticket
+    event = db.query(Event).filter(Event.event_id == booking.event_id).first()
+    if event:
+        event.tickets_available += 1
 
     booking.status = "cancelled"
     db.commit()

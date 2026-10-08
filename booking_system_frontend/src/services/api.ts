@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type {
-  Flight,
+  Event,
   Booking,
   User,
   BookingRequest,
@@ -34,13 +34,13 @@ api.interceptors.response.use(
   }
 );
 
-// ==================== Flight Endpoints ====================
+// ==================== Event Endpoints ====================
 
 /**
- * Get all available flights
+ * Get all available events
  */
-export const getFlights = async (): Promise<Flight[]> => {
-  const response = await api.get<Flight[]>('/flights');
+export const getEvents = async (): Promise<Event[]> => {
+  const response = await api.get<Event[]>('/events');
   return response.data;
 };
 
@@ -72,9 +72,9 @@ export const getUserByCredentials = async (
 // ==================== Booking Endpoints ====================
 
 /**
- * Book a flight
+ * Book a ticket for an event
  */
-export const bookFlight = async (
+export const bookTicket = async (
   data: BookingRequest
 ): Promise<Booking | ErrorResponse> => {
   const response = await api.post<Booking | ErrorResponse>('/book', data);

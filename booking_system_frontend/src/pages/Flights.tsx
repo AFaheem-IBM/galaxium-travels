@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import type { Flight } from '../types';
+import type { Event } from '../types';
 import { LoadingSpinner } from '../components/common';
-import { FlightCard } from '../components/flights/FlightCard';
+import { EventCard } from '../components/flights/FlightCard';
 import { UserIdentification } from '../components/user/UserIdentification';
 import { BookingModal } from '../components/bookings/BookingModal';
-import { getFlights } from '../services/api';
+import { getEvents } from '../services/api';
 import { useUser } from '../hooks/useUser';
 import { Search, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -13,41 +13,39 @@ import { motion } from 'framer-motion';
 /** Events listing page — browse and book tickets for concerts, conferences, and sporting events. */
 export const Flights = () => {
   const { user } = useUser();
-  const [flights, setFlights] = useState<Flight[]>([]);
-  const [filteredFlights, setFilteredFlights] = useState<Flight[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
 
-  // Fetch events on mount
   useEffect(() => {
-    loadFlights();
+    loadEvents();
   }, []);
 
-  // Filter events when search term changes
   useEffect(() => {
     if (!searchTerm.trim()) {
-      setFilteredFlights(flights);
+      setFilteredEvents(events);
       return;
     }
-
     const term = searchTerm.toLowerCase();
-    const filtered = flights.filter(
-      (flight) =>
-        flight.origin.toLowerCase().includes(term) ||
-        flight.destination.toLowerCase().includes(term)
+    setFilteredEvents(
+      events.filter(
+        (e) =>
+          e.origin.toLowerCase().includes(term) ||
+          e.destination.toLowerCase().includes(term)
+      )
     );
-    setFilteredFlights(filtered);
-  }, [searchTerm, flights]);
+  }, [searchTerm, events]);
 
-  const loadFlights = async () => {
+  const loadEvents = async () => {
     setIsLoading(true);
     try {
-      const data = await getFlights();
-      setFlights(data);
-      setFilteredFlights(data);
+      const data = await getEvents();
+      setEvents(data);
+      setFilteredEvents(data);
     } catch (error: any) {
       toast.error('Failed to load events');
       console.error(error);
@@ -56,9 +54,8 @@ export const Flights = () => {
     }
   };
 
-  const handleBookFlight = (flight: Flight) => {
-    setSelectedFlight(flight);
-
+  const handleBookEvent = (event: Event) => {
+    setSelectedEvent(event);
     if (!user) {
       setShowUserModal(true);
     } else {
@@ -71,7 +68,7 @@ export const Flights = () => {
   };
 
   const handleBookingSuccess = () => {
-    loadFlights();
+    loadEvents();
   };
 
   return (
@@ -98,7 +95,6 @@ export const Flights = () => {
         className="glass-card p-6"
       >
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-star-white/50" size={20} />
             <input
@@ -109,12 +105,10 @@ export const Flights = () => {
               className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-star-white placeholder-star-white/50 focus:outline-none focus:ring-2 focus:ring-cosmic-purple"
             />
           </div>
-
-          {/* Filter indicator */}
           <div className="flex items-center gap-2 text-star-white/70">
             <Filter size={20} />
             <span className="text-sm">
-              {filteredFlights.length} of {flights.length} events
+              {filteredEvents.length} of {events.length} events
             </span>
           </div>
         </div>
@@ -123,7 +117,7 @@ export const Flights = () => {
       {/* Events Grid */}
       {isLoading ? (
         <LoadingSpinner size="lg" text="Loading events..." />
-      ) : filteredFlights.length === 0 ? (
+      ) : filteredEvents.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -140,28 +134,26 @@ export const Flights = () => {
           transition={{ delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {filteredFlights.map((flight) => (
-            <FlightCard
-              key={flight.flight_id}
-              flight={flight}
-              onBook={handleBookFlight}
+          {filteredEvents.map((event) => (
+            <EventCard
+              key={event.event_id}
+              event={event}
+              onBook={handleBookEvent}
             />
           ))}
         </motion.div>
       )}
 
-      {/* User Identification Modal */}
       <UserIdentification
         isOpen={showUserModal}
         onClose={() => setShowUserModal(false)}
         onSuccess={handleUserIdentified}
       />
 
-      {/* Booking Confirmation Modal */}
       <BookingModal
         isOpen={showBookingModal}
         onClose={() => setShowBookingModal(false)}
-        flight={selectedFlight}
+        event={selectedEvent}
         onSuccess={handleBookingSuccess}
       />
     </div>

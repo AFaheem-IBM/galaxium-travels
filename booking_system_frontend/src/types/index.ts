@@ -1,19 +1,19 @@
 // API Data Models matching backend schemas
 
-export interface Flight {
-  flight_id: number;
+export interface Event {
+  event_id: number;
   origin: string;
   destination: string;
   departure_time: string;
   arrival_time: string;
   price: number;
-  seats_available: number;
+  tickets_available: number;
 }
 
 export interface Booking {
   booking_id: number;
   user_id: number;
-  flight_id: number;
+  event_id: number;
   status: 'booked' | 'cancelled' | 'completed';
   booking_time: string;
 }
@@ -28,7 +28,7 @@ export interface User {
 export interface BookingRequest {
   user_id: number;
   name: string;
-  flight_id: number;
+  event_id: number;
 }
 
 export interface UserRegistration {
@@ -44,11 +44,11 @@ export interface ErrorResponse {
 }
 
 // Extended types for UI
-export interface BookingWithFlight extends Booking {
-  flight?: Flight;
+export interface BookingWithEvent extends Booking {
+  event?: Event;
 }
 
-export interface FlightFilters {
+export interface EventFilters {
   origin?: string;
   destination?: string;
   minPrice?: number;

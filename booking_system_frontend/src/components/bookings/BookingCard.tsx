@@ -1,4 +1,4 @@
-import type { Booking, Flight } from '../../types';
+import type { Booking, Event } from '../../types';
 import { Card, Button } from '../common';
 import { Ticket, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { formatDate, formatCurrency } from '../../utils/formatters';
@@ -6,13 +6,13 @@ import { motion } from 'framer-motion';
 
 interface BookingCardProps {
   booking: Booking;
-  flight?: Flight;
+  event?: Event;
   onCancel: (bookingId: number) => void;
   isCancelling?: boolean;
 }
 
 /** Displays a single booked ticket with its event details and cancellation option. */
-export const BookingCard = ({ booking, flight, onCancel, isCancelling }: BookingCardProps) => {
+export const BookingCard = ({ booking, event, onCancel, isCancelling }: BookingCardProps) => {
   const getStatusIcon = () => {
     switch (booking.status) {
       case 'booked':
@@ -68,27 +68,27 @@ export const BookingCard = ({ booking, flight, onCancel, isCancelling }: Booking
         </div>
 
         {/* Event Details */}
-        {flight ? (
+        {event ? (
           <div className="space-y-3 mb-4">
             <div>
               <h3 className="text-xl font-bold text-star-white mb-1">
-                {flight.origin}
+                {event.origin}
               </h3>
-              <p className="text-sm text-star-white/60">@ {flight.destination}</p>
-              <p className="text-xs text-star-white/40">Event #{flight.flight_id}</p>
+              <p className="text-sm text-star-white/60">@ {event.destination}</p>
+              <p className="text-xs text-star-white/40">Event #{event.event_id}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-star-white/60 mb-1">Doors Open</p>
                 <p className="text-sm text-star-white font-medium">
-                  {formatDate(flight.departure_time)}
+                  {formatDate(event.departure_time)}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-star-white/60 mb-1">Event End</p>
                 <p className="text-sm text-star-white font-medium">
-                  {formatDate(flight.arrival_time)}
+                  {formatDate(event.arrival_time)}
                 </p>
               </div>
             </div>
@@ -96,13 +96,13 @@ export const BookingCard = ({ booking, flight, onCancel, isCancelling }: Booking
             <div className="flex items-center justify-between pt-3 border-t border-white/10">
               <span className="text-sm text-star-white/60">Ticket Price</span>
               <span className="text-lg font-bold text-star-white">
-                {formatCurrency(flight.price)}
+                {formatCurrency(event.price)}
               </span>
             </div>
           </div>
         ) : (
           <div className="mb-4">
-            <p className="text-sm text-star-white/60">Event ID: {booking.flight_id}</p>
+            <p className="text-sm text-star-white/60">Event ID: {booking.event_id}</p>
           </div>
         )}
 

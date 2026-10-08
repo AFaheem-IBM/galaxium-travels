@@ -45,9 +45,9 @@ export const Header = ({ onSignIn }: HeaderProps) => {
               Home
             </Link>
             <Link
-              to="/flights"
+              to="/events"
               className={`text-sm font-medium transition-colors ${
-                isActive('/flights')
+                isActive('/events')
                   ? 'text-cosmic-purple'
                   : 'text-star-white/70 hover:text-star-white'
               }`}
@@ -91,7 +91,7 @@ export const Header = ({ onSignIn }: HeaderProps) => {
                 <Button variant="secondary" size="sm" onClick={onSignIn}>
                   Sign In
                 </Button>
-                <Link to="/flights">
+                <Link to="/events">
                   <Button size="sm">Get Tickets</Button>
                 </Link>
               </>
@@ -112,9 +112,9 @@ export const Header = ({ onSignIn }: HeaderProps) => {
             Home
           </Link>
           <Link
-            to="/flights"
+            to="/events"
             className={`text-sm font-medium transition-colors ${
-              isActive('/flights')
+              isActive('/events')
                 ? 'text-cosmic-purple'
                 : 'text-star-white/70 hover:text-star-white'
             }`}

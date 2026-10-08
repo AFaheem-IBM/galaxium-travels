@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from typing import Union
 from db import SessionLocal, init_db, get_db
 from seed import seed
-from services import flight, user, booking
-from schemas import FlightOut, BookingOut, UserOut, ErrorResponse, BookingRequest, UserRegistration
+from services import event, user, booking
+from schemas import EventOut, BookingOut, UserOut, ErrorResponse, BookingRequest, UserRegistration
 
 
 # ==================== MCP SERVER (for AI agents) ====================
@@ -17,25 +17,25 @@ mcp = FastMCP("Galaxium Booking System")
 
 
 @mcp.tool()
-def list_flights() -> list[FlightOut]:
-    """List all available flights.
-    Returns a list of flights with origin, destination, times, price, and seats available."""
+def list_events() -> list[EventOut]:
+    """List all available events.
+    Returns a list of events with name, venue, times, price, and tickets available."""
     db = SessionLocal()
     try:
-        return flight.list_flights(db)
+        return event.list_events(db)
     finally:
         db.close()
 
 
 @mcp.tool()
-def book_flight(user_id: int, name: str, flight_id: int) -> BookingOut:
-    """Book a seat on a specific flight for a user.
-    Requires user_id, name, and flight_id.
-    Decrements available seats if successful.
+def book_ticket(user_id: int, name: str, event_id: int) -> BookingOut:
+    """Book a ticket for a specific event for a user.
+    Requires user_id, name, and event_id.
+    Decrements available tickets if successful.
     Returns booking details or raises an error if booking is not possible."""
     db = SessionLocal()
     try:
-        result = booking.book_flight(db, user_id, name, flight_id)
+        result = booking.book_ticket(db, user_id, name, event_id)
         if isinstance(result, ErrorResponse):
             raise Exception(result.details or result.error)
         return result
@@ -57,7 +57,7 @@ def get_bookings(user_id: int) -> list[BookingOut]:
 @mcp.tool()
 def cancel_booking(booking_id: int) -> BookingOut:
     """Cancel an existing booking by its booking_id.
-    Increments available seats for the flight if successful.
+    Increments available tickets for the event if successful.
     Returns updated booking details or raises an error if already cancelled or not found."""
     db = SessionLocal()
     try:
@@ -116,7 +116,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Galaxium Booking System",
-    description="API for booking interplanetary flights. Swagger UI available at /docs",
+    description="API for booking event tickets. Swagger UI available at /docs",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -136,19 +136,19 @@ def health_check():
     return {"status": "OK"}
 
 
-@app.get("/flights", response_model=list[FlightOut], tags=["Flights"])
-def get_flights(db: Session = Depends(get_db)):
-    """List all available flights with origin, destination, times, price, and seats available."""
-    return flight.list_flights(db)
+@app.get("/events", response_model=list[EventOut], tags=["Events"])
+def get_events(db: Session = Depends(get_db)):
+    """List all available events with name, venue, times, price, and tickets available."""
+    return event.list_events(db)
 
 
 @app.post("/book", response_model=Union[BookingOut, ErrorResponse], tags=["Bookings"])
-def book_flight_endpoint(request: BookingRequest, db: Session = Depends(get_db)):
-    """Book a seat on a specific flight for a user.
+def book_ticket_endpoint(request: BookingRequest, db: Session = Depends(get_db)):
+    """Book a ticket for a specific event for a user.
 
-    Requires user_id, name, and flight_id. Decrements available seats if successful.
+    Requires user_id, name, and event_id. Decrements available tickets if successful.
     """
-    return booking.book_flight(db, request.user_id, request.name, request.flight_id)
+    return booking.book_ticket(db, request.user_id, request.name, request.event_id)
 
 
 @app.get("/bookings/{user_id}", response_model=list[BookingOut], tags=["Bookings"])
@@ -161,7 +161,7 @@ def get_user_bookings(user_id: int, db: Session = Depends(get_db)):
 def cancel_booking_endpoint(booking_id: int, db: Session = Depends(get_db)):
     """Cancel an existing booking by its booking_id.
 
-    Increments available seats for the flight if successful.
+    Increments available tickets for the event if successful.
     """
     return booking.cancel_booking(db, booking_id)
 

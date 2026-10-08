@@ -1,18 +1,18 @@
-import type { Flight } from '../../types';
+import type { Event } from '../../types';
 import { Card, Button } from '../common';
 import { Ticket, Clock, DollarSign, Users, MapPin } from 'lucide-react';
 import { formatCurrency, formatDate, formatTime, calculateDuration } from '../../utils/formatters';
 import { motion } from 'framer-motion';
 
-interface FlightCardProps {
-  flight: Flight;
-  onBook: (flight: Flight) => void;
+interface EventCardProps {
+  event: Event;
+  onBook: (event: Event) => void;
 }
 
 /** Displays a single event (concert, conference, or sporting event) with booking action. */
-export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
-  const isLowSeats = flight.seats_available <= 2;
-  const isSoldOut = flight.seats_available === 0;
+export const EventCard = ({ event, onBook }: EventCardProps) => {
+  const isLowTickets = event.tickets_available <= 2;
+  const isSoldOut = event.tickets_available === 0;
 
   return (
     <motion.div
@@ -30,10 +30,10 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
             </div>
             <div>
               <h3 className="text-xl font-bold text-star-white">
-                {flight.origin}
+                {event.origin}
               </h3>
               <p className="text-sm text-star-white/60">
-                Event #{flight.flight_id}
+                Event #{event.event_id}
               </p>
             </div>
           </div>
@@ -45,7 +45,7 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
           <div className="flex items-center gap-2 text-star-white/70">
             <MapPin size={16} className="text-cosmic-purple" />
             <span className="text-sm font-medium text-star-white">
-              {flight.destination}
+              {event.destination}
             </span>
           </div>
 
@@ -54,19 +54,19 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
             <div>
               <p className="text-xs text-star-white/60 mb-1">Doors Open</p>
               <p className="text-sm font-medium text-star-white">
-                {formatDate(flight.departure_time, 'MMM dd, yyyy')}
+                {formatDate(event.departure_time, 'MMM dd, yyyy')}
               </p>
               <p className="text-lg font-bold text-cosmic-purple">
-                {formatTime(flight.departure_time)}
+                {formatTime(event.departure_time)}
               </p>
             </div>
             <div>
               <p className="text-xs text-star-white/60 mb-1">Event End</p>
               <p className="text-sm font-medium text-star-white">
-                {formatDate(flight.arrival_time, 'MMM dd, yyyy')}
+                {formatDate(event.arrival_time, 'MMM dd, yyyy')}
               </p>
               <p className="text-lg font-bold text-cosmic-purple">
-                {formatTime(flight.arrival_time)}
+                {formatTime(event.arrival_time)}
               </p>
             </div>
           </div>
@@ -75,7 +75,7 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
           <div className="flex items-center gap-2 text-star-white/70">
             <Clock size={16} />
             <span className="text-sm">
-              Duration: {calculateDuration(flight.departure_time, flight.arrival_time)}
+              Duration: {calculateDuration(event.departure_time, event.arrival_time)}
             </span>
           </div>
 
@@ -83,23 +83,23 @@ export const FlightCard = ({ flight, onBook }: FlightCardProps) => {
           <div className="flex items-center gap-2">
             <DollarSign size={16} className="text-alien-green" />
             <span className="text-2xl font-bold text-star-white">
-              {formatCurrency(flight.price)}
+              {formatCurrency(event.price)}
             </span>
             <span className="text-sm text-star-white/60">per ticket</span>
           </div>
 
           {/* Tickets Available */}
           <div className="flex items-center gap-2">
-            <Users size={16} className={isLowSeats ? 'text-solar-orange' : 'text-star-white/70'} />
-            <span className={`text-sm ${isLowSeats ? 'text-solar-orange font-semibold' : 'text-star-white/70'}`}>
-              {isSoldOut ? 'Sold Out' : `${flight.seats_available} tickets left`}
+            <Users size={16} className={isLowTickets ? 'text-solar-orange' : 'text-star-white/70'} />
+            <span className={`text-sm ${isLowTickets ? 'text-solar-orange font-semibold' : 'text-star-white/70'}`}>
+              {isSoldOut ? 'Sold Out' : `${event.tickets_available} tickets left`}
             </span>
           </div>
         </div>
 
         {/* Book Button */}
         <Button
-          onClick={() => onBook(flight)}
+          onClick={() => onBook(event)}
           disabled={isSoldOut}
           className="w-full"
         >

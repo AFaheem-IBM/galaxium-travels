@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Booking, Flight } from '../types';
+import type { Booking, Event } from '../types';
 import { LoadingSpinner, Modal, Button } from '../components/common';
 import { BookingCard } from '../components/bookings/BookingCard';
-import { getUserBookings, getFlights, cancelBooking, isErrorResponse } from '../services/api';
+import { getUserBookings, getEvents, cancelBooking, isErrorResponse } from '../services/api';
 import { useUser } from '../hooks/useUser';
 import { AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ export const MyBookings = () => {
   const { user } = useUser();
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [flights, setFlights] = useState<Flight[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -22,7 +22,7 @@ export const MyBookings = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/flights');
+      navigate('/events');
       return;
     }
     loadData();
@@ -30,15 +30,14 @@ export const MyBookings = () => {
 
   const loadData = async () => {
     if (!user) return;
-
     setIsLoading(true);
     try {
-      const [bookingsData, flightsData] = await Promise.all([
+      const [bookingsData, eventsData] = await Promise.all([
         getUserBookings(user.user_id),
-        getFlights(),
+        getEvents(),
       ]);
       setBookings(bookingsData);
-      setFlights(flightsData);
+      setEvents(eventsData);
     } catch (error: any) {
       toast.error('Failed to load tickets');
       console.error(error);
@@ -54,18 +53,14 @@ export const MyBookings = () => {
 
   const handleConfirmCancel = async () => {
     if (!bookingToCancel) return;
-
     setCancellingId(bookingToCancel);
     setShowCancelModal(false);
-
     try {
       const result = await cancelBooking(bookingToCancel);
-
       if (isErrorResponse(result)) {
         toast.error(result.details || result.error);
         return;
       }
-
       toast.success('Ticket cancelled successfully');
       loadData();
     } catch (error: any) {
@@ -76,16 +71,14 @@ export const MyBookings = () => {
     }
   };
 
-  const getFlightForBooking = (booking: Booking): Flight | undefined => {
-    return flights.find((f) => f.flight_id === booking.flight_id);
+  const getEventForBooking = (booking: Booking): Event | undefined => {
+    return events.find((e) => e.event_id === booking.event_id);
   };
 
   const activeBookings = bookings.filter((b) => b.status === 'booked');
   const pastBookings = bookings.filter((b) => b.status !== 'booked');
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div className="space-y-8">
@@ -118,13 +111,12 @@ export const MyBookings = () => {
           <p className="text-star-white/70 mb-6">
             Find an event you love and grab your ticket before it sells out!
           </p>
-          <Button onClick={() => navigate('/flights')}>
+          <Button onClick={() => navigate('/events')}>
             Browse Events
           </Button>
         </motion.div>
       ) : (
         <div className="space-y-8">
-          {/* Active Tickets */}
           {activeBookings.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -139,7 +131,7 @@ export const MyBookings = () => {
                   <BookingCard
                     key={booking.booking_id}
                     booking={booking}
-                    flight={getFlightForBooking(booking)}
+                    event={getEventForBooking(booking)}
                     onCancel={handleCancelClick}
                     isCancelling={cancellingId === booking.booking_id}
                   />
@@ -147,8 +139,6 @@ export const MyBookings = () => {
               </div>
             </motion.div>
           )}
-
-          {/* Past Tickets */}
           {pastBookings.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -163,7 +153,7 @@ export const MyBookings = () => {
                   <BookingCard
                     key={booking.booking_id}
                     booking={booking}
-                    flight={getFlightForBooking(booking)}
+                    event={getEventForBooking(booking)}
                     onCancel={handleCancelClick}
                   />
                 ))}
@@ -173,7 +163,6 @@ export const MyBookings = () => {
         </div>
       )}
 
-      {/* Cancel Confirmation Modal */}
       <Modal
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}

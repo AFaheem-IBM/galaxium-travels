@@ -4,35 +4,35 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import User, Flight, Booking
+from models import User, Event, Booking
 from schemas import ErrorResponse
-from services import flight, user, booking
+from services import event, user, booking
 
 
-class TestFlightService:
-    """Test flight service functions."""
+class TestEventService:
+    """Test event service functions."""
 
-    def test_list_flights_empty(self, db_session):
-        """Test listing flights when database is empty."""
-        result = flight.list_flights(db_session)
+    def test_list_events_empty(self, db_session):
+        """Test listing events when database is empty."""
+        result = event.list_events(db_session)
         assert result == []
 
-    def test_list_flights_with_data(self, db_session):
-        """Test listing flights with data in database."""
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+    def test_list_events_with_data(self, db_session):
+        """Test listing events with data in database."""
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
 
-        result = flight.list_flights(db_session)
+        result = event.list_events(db_session)
         assert len(result) == 1
-        assert result[0].origin == "Earth"
-        assert result[0].destination == "Mars"
+        assert result[0].origin == "Test Concert"
+        assert result[0].destination == "Test Venue, Test City"
 
 
 class TestUserService:
@@ -72,117 +72,117 @@ class TestUserService:
 class TestBookingService:
     """Test booking service functions."""
 
-    def test_book_flight_success(self, db_session):
-        """Test successful flight booking."""
+    def test_book_ticket_success(self, db_session):
+        """Test successful ticket booking."""
         db_session.add(User(name="Test User", email="test@example.com"))
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
 
         user_obj = db_session.query(User).first()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
-        result = booking.book_flight(db_session, user_obj.user_id, "Test User", flight_obj.flight_id)
+        result = booking.book_ticket(db_session, user_obj.user_id, "Test User", event_obj.event_id)
         assert result.status == "booked"
         assert result.user_id == user_obj.user_id
-        assert result.flight_id == flight_obj.flight_id
+        assert result.event_id == event_obj.event_id
 
-        # Verify seat was decremented
-        db_session.refresh(flight_obj)
-        assert flight_obj.seats_available == 4
+        # Verify ticket count was decremented
+        db_session.refresh(event_obj)
+        assert event_obj.tickets_available == 4
 
-    def test_book_flight_not_found(self, db_session):
-        """Test booking non-existent flight."""
+    def test_book_ticket_event_not_found(self, db_session):
+        """Test booking non-existent event."""
         db_session.add(User(name="Test User", email="test@example.com"))
         db_session.commit()
         user_obj = db_session.query(User).first()
 
-        result = booking.book_flight(db_session, user_obj.user_id, "Test User", 999)
+        result = booking.book_ticket(db_session, user_obj.user_id, "Test User", 999)
         assert isinstance(result, ErrorResponse)
-        assert result.error_code == "FLIGHT_NOT_FOUND"
+        assert result.error_code == "EVENT_NOT_FOUND"
 
-    def test_book_flight_no_seats(self, db_session):
-        """Test booking when no seats available."""
+    def test_book_ticket_no_tickets(self, db_session):
+        """Test booking when no tickets available."""
         db_session.add(User(name="Test User", email="test@example.com"))
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=0
+            tickets_available=0
         ))
         db_session.commit()
 
         user_obj = db_session.query(User).first()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
-        result = booking.book_flight(db_session, user_obj.user_id, "Test User", flight_obj.flight_id)
+        result = booking.book_ticket(db_session, user_obj.user_id, "Test User", event_obj.event_id)
         assert isinstance(result, ErrorResponse)
-        assert result.error_code == "NO_SEATS_AVAILABLE"
+        assert result.error_code == "NO_TICKETS_AVAILABLE"
 
-    def test_book_flight_user_not_found(self, db_session):
+    def test_book_ticket_user_not_found(self, db_session):
         """Test booking with non-existent user."""
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
-        result = booking.book_flight(db_session, 999, "Fake User", flight_obj.flight_id)
+        result = booking.book_ticket(db_session, 999, "Fake User", event_obj.event_id)
         assert isinstance(result, ErrorResponse)
         assert result.error_code == "USER_NOT_FOUND"
 
-    def test_book_flight_name_mismatch(self, db_session):
+    def test_book_ticket_name_mismatch(self, db_session):
         """Test booking with wrong name for user ID."""
         db_session.add(User(name="Real Name", email="test@example.com"))
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
 
         user_obj = db_session.query(User).first()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
-        result = booking.book_flight(db_session, user_obj.user_id, "Wrong Name", flight_obj.flight_id)
+        result = booking.book_ticket(db_session, user_obj.user_id, "Wrong Name", event_obj.event_id)
         assert isinstance(result, ErrorResponse)
         assert result.error_code == "NAME_MISMATCH"
 
     def test_cancel_booking_success(self, db_session):
         """Test successful booking cancellation."""
         db_session.add(User(name="Test User", email="test@example.com"))
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=4
+            tickets_available=4
         ))
         db_session.commit()
 
         user_obj = db_session.query(User).first()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
         db_session.add(Booking(
             user_id=user_obj.user_id,
-            flight_id=flight_obj.flight_id,
+            event_id=event_obj.event_id,
             status="booked",
             booking_time="2099-01-01T10:00:00Z"
         ))
@@ -193,9 +193,9 @@ class TestBookingService:
 
         assert result.status == "cancelled"
 
-        # Verify seat was restored
-        db_session.refresh(flight_obj)
-        assert flight_obj.seats_available == 5
+        # Verify ticket was restored
+        db_session.refresh(event_obj)
+        assert event_obj.tickets_available == 5
 
     def test_cancel_booking_not_found(self, db_session):
         """Test cancelling non-existent booking."""
@@ -206,22 +206,22 @@ class TestBookingService:
     def test_cancel_booking_already_cancelled(self, db_session):
         """Test cancelling already cancelled booking."""
         db_session.add(User(name="Test User", email="test@example.com"))
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
 
         user_obj = db_session.query(User).first()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
         db_session.add(Booking(
             user_id=user_obj.user_id,
-            flight_id=flight_obj.flight_id,
+            event_id=event_obj.event_id,
             status="cancelled",
             booking_time="2099-01-01T10:00:00Z"
         ))
@@ -236,22 +236,22 @@ class TestBookingService:
     def test_get_bookings_success(self, db_session):
         """Test getting user bookings."""
         db_session.add(User(name="Test User", email="test@example.com"))
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
 
         user_obj = db_session.query(User).first()
-        flight_obj = db_session.query(Flight).first()
+        event_obj = db_session.query(Event).first()
 
         db_session.add(Booking(
             user_id=user_obj.user_id,
-            flight_id=flight_obj.flight_id,
+            event_id=event_obj.event_id,
             status="booked",
             booking_time="2099-01-01T10:00:00Z"
         ))

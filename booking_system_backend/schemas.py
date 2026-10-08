@@ -2,14 +2,14 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class FlightOut(BaseModel):
-    flight_id: int
+class EventOut(BaseModel):
+    event_id: int
     origin: str
     destination: str
     departure_time: str
     arrival_time: str
     price: int
-    seats_available: int
+    tickets_available: int
 
     class Config:
         from_attributes = True
@@ -18,13 +18,13 @@ class FlightOut(BaseModel):
 class BookingRequest(BaseModel):
     user_id: int
     name: str
-    flight_id: int
+    event_id: int
 
 
 class BookingOut(BaseModel):
     booking_id: int
     user_id: int
-    flight_id: int
+    event_id: int
     status: str
     booking_time: str
 

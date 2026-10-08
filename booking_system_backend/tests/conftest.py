@@ -77,15 +77,15 @@ def sample_user_data():
 
 
 @pytest.fixture
-def sample_flight_data():
-    """Sample flight data for testing."""
+def sample_event_data():
+    """Sample event data for testing."""
     return {
-        "origin": "Earth",
-        "destination": "Mars",
+        "origin": "Test Concert",
+        "destination": "Test Venue, Test City",
         "departure_time": "2099-01-01T09:00:00Z",
         "arrival_time": "2099-01-01T17:00:00Z",
         "price": 1000000,
-        "seats_available": 5
+        "tickets_available": 5
     }
 
 
@@ -95,5 +95,5 @@ def sample_booking_data():
     return {
         "user_id": 1,
         "name": "Test User",
-        "flight_id": 1
+        "event_id": 1
     }

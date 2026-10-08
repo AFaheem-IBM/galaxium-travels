@@ -67,7 +67,7 @@ export const Home = () => {
           transition={{ delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Link to="/flights">
+          <Link to="/events">
             <Button size="lg" className="w-full sm:w-auto">
               Browse Events
             </Button>
@@ -125,7 +125,7 @@ export const Home = () => {
           Join thousands of fans who use Stagepass to grab tickets before they sell out.
           Don't miss the next great show.
         </p>
-        <Link to="/flights">
+        <Link to="/events">
           <Button variant="secondary" size="lg">
             Get Tickets Now
           </Button>

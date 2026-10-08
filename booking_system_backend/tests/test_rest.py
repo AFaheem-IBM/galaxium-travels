@@ -4,36 +4,36 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import User, Flight, Booking
+from models import User, Event, Booking
 
 
-class TestFlightsEndpoint:
-    """Test /flights endpoint."""
+class TestEventsEndpoint:
+    """Test /events endpoint."""
 
-    def test_get_flights_empty(self, client, db_session):
-        """Test getting flights when database is empty."""
-        response = client.get("/flights")
+    def test_get_events_empty(self, client, db_session):
+        """Test getting events when database is empty."""
+        response = client.get("/events")
         assert response.status_code == 200
         assert response.json() == []
 
-    def test_get_flights_with_data(self, client, db_session):
-        """Test getting flights with data."""
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+    def test_get_events_with_data(self, client, db_session):
+        """Test getting events with data."""
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
 
-        response = client.get("/flights")
+        response = client.get("/events")
         assert response.status_code == 200
         data = response.json()
         assert len(data) == 1
-        assert data[0]["origin"] == "Earth"
-        assert data[0]["destination"] == "Mars"
+        assert data[0]["origin"] == "Test Concert"
+        assert data[0]["destination"] == "Test Venue, Test City"
 
 
 class TestRegisterEndpoint:
@@ -89,29 +89,29 @@ class TestUserEndpoint:
 class TestBookEndpoint:
     """Test /book endpoint."""
 
-    def test_book_flight_success(self, client, db_session, sample_user_data):
-        """Test successful flight booking."""
+    def test_book_ticket_success(self, client, db_session, sample_user_data):
+        """Test successful ticket booking."""
         # Register user
         user_response = client.post("/register", json=sample_user_data)
         user_id = user_response.json()["user_id"]
 
-        # Create flight
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        # Create event
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
-        flight = db_session.query(Flight).first()
+        event = db_session.query(Event).first()
 
-        # Book flight
+        # Book ticket
         response = client.post("/book", json={
             "user_id": user_id,
             "name": sample_user_data["name"],
-            "flight_id": flight.flight_id
+            "event_id": event.event_id
         })
 
         assert response.status_code == 200
@@ -119,21 +119,21 @@ class TestBookEndpoint:
         assert data["status"] == "booked"
         assert data["user_id"] == user_id
 
-    def test_book_flight_not_found(self, client, db_session, sample_user_data):
-        """Test booking non-existent flight."""
+    def test_book_ticket_event_not_found(self, client, db_session, sample_user_data):
+        """Test booking non-existent event."""
         user_response = client.post("/register", json=sample_user_data)
         user_id = user_response.json()["user_id"]
 
         response = client.post("/book", json={
             "user_id": user_id,
             "name": sample_user_data["name"],
-            "flight_id": 999
+            "event_id": 999
         })
 
         assert response.status_code == 200
         data = response.json()
         assert data["success"] == False
-        assert data["error_code"] == "FLIGHT_NOT_FOUND"
+        assert data["error_code"] == "EVENT_NOT_FOUND"
 
 
 class TestBookingsEndpoint:
@@ -145,21 +145,21 @@ class TestBookingsEndpoint:
         user_response = client.post("/register", json=sample_user_data)
         user_id = user_response.json()["user_id"]
 
-        # Create flight and booking
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        # Create event and booking
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            tickets_available=5
         ))
         db_session.commit()
-        flight = db_session.query(Flight).first()
+        event = db_session.query(Event).first()
 
         db_session.add(Booking(
             user_id=user_id,
-            flight_id=flight.flight_id,
+            event_id=event.event_id,
             status="booked",
             booking_time="2099-01-01T10:00:00Z"
         ))
@@ -187,21 +187,21 @@ class TestCancelEndpoint:
         user_response = client.post("/register", json=sample_user_data)
         user_id = user_response.json()["user_id"]
 
-        # Create flight and booking
-        db_session.add(Flight(
-            origin="Earth",
-            destination="Mars",
+        # Create event and booking
+        db_session.add(Event(
+            origin="Test Concert",
+            destination="Test Venue, Test City",
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=4
+            tickets_available=4
         ))
         db_session.commit()
-        flight = db_session.query(Flight).first()
+        event = db_session.query(Event).first()
 
         db_session.add(Booking(
             user_id=user_id,
-            flight_id=flight.flight_id,
+            event_id=event.event_id,
             status="booked",
             booking_time="2099-01-01T10:00:00Z"
         ))
